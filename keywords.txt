@@ -1,5 +1,9 @@
 # Syntax Coloring Map For QuickMpr121
 
+# Library include (KEYWORD1)
+QuickMpr121	KEYWORD1
+
+
 # Classes (KEYWORD1)
 mpr121	KEYWORD1
 
