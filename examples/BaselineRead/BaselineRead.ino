@@ -1,6 +1,6 @@
 /*
  * BaselineRead example for QuickMpr121
- * ================================
+ * ====================================
  * 
  * Logs analog touch readings adjusted with baseline offsets to serial
  */

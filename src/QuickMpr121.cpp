@@ -258,11 +258,11 @@ void mpr121::setPWM(byte pin, byte count, byte value) {
 
   byte value_4 = value & 0b1111;
   
-  mpr121Register reg;
-  byte regVal;
+  mpr121Register reg = MPRREG_PWM_DUTY_0;
+  byte regVal = 0;
 
   for (byte i = 0; i < count; i++) {
-    if (i == 0 || (pin + i) % 2 == 0) { // if just starting of moving to a new register's start
+    if (i == 0 || (pin + i) % 2 == 0) { // if just starting or moving to a new register's start
       reg = (mpr121Register)(MPRREG_PWM_DUTY_0 + (pin + i)/2);
       regVal = readRegister(reg);
     }
