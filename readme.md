@@ -32,6 +32,9 @@ short touches = mpr.readTouchState();
 bool touch0 = bitRead(touches, 0);
 ```
 
+More complete examples are in the examples folder (accessible in Arduino IDE menus).  
+Full docs are at docs/html/index.html.
+
 　
 
 ### Important notes
