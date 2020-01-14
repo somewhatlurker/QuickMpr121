@@ -1,0 +1,6 @@
+# ignore zip files
+*.zip
+
+# ignore doxygen binary I lazily keep in docs lol
+doxygen.exe
+libclang.dll
