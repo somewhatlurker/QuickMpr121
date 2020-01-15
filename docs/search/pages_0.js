@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['quickmpr121_232',['QuickMpr121',['../index.html',1,'']]]
+  ['quickmpr121_20documentation_232',['QuickMpr121 Documentation',['../index.html',1,'']]]
 ];

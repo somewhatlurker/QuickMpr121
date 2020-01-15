@@ -16,7 +16,7 @@
 
 
 // don't change this
-#define FIRST_PIN_PER_MPR (12 - PINS_PER_MPR)
+#define FIRST_PIN_PER_MPR (12 - PINS_PER_MPR) // subtract number of pins from 12 to find where to start on each mpr
 
 
 // create the mpr121 instances

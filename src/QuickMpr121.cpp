@@ -2,7 +2,7 @@
  * QuickMpr121 Arduino library by somewhatlurker
  * =============================================
  * 
- * This is a library for using MPR121 capacitive touch sensing ICs.
+ * QuickMpr121 is a library for using MPR121 capacitive touch sensing ICs.
  * More info in QuickMpr121.h, or read the docs.
  * 
  * Copyright 2020 somewhatlurker, MIT license
@@ -20,7 +20,7 @@ byte mpr121::i2cReadBuf[MPR121_I2C_BUFLEN];
   #endif
 #endif // MPR121_SAVE_MEMORY
 
-// write a value to an MPR121 register
+// Writes a value to an MPR121 register.
 void mpr121::writeRegister(mpr121Register addr, byte value) {
   i2cWire->beginTransmission(i2cAddr);
   i2cWire->write(addr);
@@ -28,8 +28,8 @@ void mpr121::writeRegister(mpr121Register addr, byte value) {
   i2cWire->endTransmission();
 }
 
-// read bytes from consecutive MPR121 registers, starting at addr
-// max of 8 bytes
+// Reads bytes from consecutive MPR121 registers, starting at addr.
+// Max count is equal to the MPR121_I2C_BUFLEN define.
 byte* mpr121::readRegister(mpr121Register addr, byte count) {
   if (count > MPR121_I2C_BUFLEN)
     count = MPR121_I2C_BUFLEN;
@@ -58,8 +58,9 @@ byte* mpr121::readRegister(mpr121Register addr, byte count) {
 }
 
 
-// returns true if electrode num and count can be used or false if the function should immediately return
-// may modify electrode and/or count to keep them in bounds as necessay
+// Checks if an electrode number and count are valid and suitable for use.
+// Returns true if they can be used or false if the caller should immediately return.
+// This function may modify electrode and/or count to keep them in bounds as necessary
 bool mpr121::checkElectrodeNum(byte &electrode, byte &count) {
   if (electrode > 12)
     return false;
@@ -70,8 +71,9 @@ bool mpr121::checkElectrodeNum(byte &electrode, byte &count) {
   return true;
 }
 
-// returns true if electrode num can be used or false if the function should immediately return
-// may modify electrode to keep it in bounds as necessay
+// Checks if an electrode number is valid and suitable for use.
+// Returns true if it can be used or false if the caller should immediately return.
+// This function may modify electrode to keep it in bounds as necessary
 bool mpr121::checkElectrodeNum(byte &electrode) {
   if (electrode > 12)
     return false;
@@ -79,8 +81,9 @@ bool mpr121::checkElectrodeNum(byte &electrode) {
   return true;
 }
 
-// returns true if pin num and count can be used or false if the function should immediately return
-// may modify pin and/or count to keep them in bounds as necessay
+// Checks if a GPIO pin number and count are valid and suitable for use.
+// Returns true if they can be used or false if the caller should immediately return.
+// This function may modify pin and/or count to keep them in bounds as necessary
 bool mpr121::checkGPIOPinNum(byte &pin, byte &count) {
   if (pin < 4 || pin > 11)
     return false;
@@ -91,8 +94,9 @@ bool mpr121::checkGPIOPinNum(byte &pin, byte &count) {
   return true;
 }
 
-// returns true if pin num can be used or false if the function should immediately return
-// may modify pin to keep it in bounds as necessay
+// Checks if a GPIO pin number is valid and suitable for use.
+// Returns true if it can be used or false if the caller should immediately return.
+// This function may modify pin to keep it in bounds as necessary
 bool mpr121::checkGPIOPinNum(byte &pin) {
   if (pin < 4 || pin > 11)
     return false;
@@ -101,7 +105,8 @@ bool mpr121::checkGPIOPinNum(byte &pin) {
 }
 
 
-// set the touch and release thresholds for a subset of electrodes (AN3892)
+// Sets the touch and release thresholds for consecutive electrodes.
+// (AN3892)
 void mpr121::setElectrodeThresholds(byte electrode, byte count, byte touchThreshold, byte releaseThreshold) {
   if (!checkElectrodeNum(electrode, count))
     return;
@@ -113,29 +118,33 @@ void mpr121::setElectrodeThresholds(byte electrode, byte count, byte touchThresh
 }
 
 
-// set the "Max Half Delta" values (AN3891)
-// max: 63
+// Sets the "Max Half Delta" baseline filter values.
+// Max: 63
+// (AN3891)
 void mpr121::setMHD(byte rising, byte falling) {
   writeRegister(MPRREG_MHD_RISING, rising);
   writeRegister(MPRREG_MHD_FALLING, falling);
 }
   
-// set the "Noise Half Delta" values (AN3891)
-// max: 63
+// Sets the "Noise Half Delta" baseline filter values.
+// Max: 63
+// (AN3891)
 void mpr121::setNHD(byte rising, byte falling, byte touched) {
   writeRegister(MPRREG_NHD_AMOUNT_RISING, rising);
   writeRegister(MPRREG_NHD_AMOUNT_FALLING, falling);
   writeRegister(MPRREG_NHD_AMOUNT_TOUCHED, touched);
 }
-  
-// set the "Noise Count Limit" values (AN3891)
+
+// Sets the "Noise Count Limit" baseline filter values.
+// (AN3891)
 void mpr121::setNCL(byte rising, byte falling, byte touched) {
   writeRegister(MPRREG_NCL_RISING, rising);
   writeRegister(MPRREG_NCL_FALLING, falling);
   writeRegister(MPRREG_NCL_TOUCHED, touched);
 }
 
-// set the "Filter Delay Limit" values (AN3891)
+// Sets the "Filter Delay Limit" baseline filter values.
+// (AN3891)
 void mpr121::setFDL(byte rising, byte falling, byte touched) {
   writeRegister(MPRREG_FDL_RISING, rising);
   writeRegister(MPRREG_FDL_FALLING, falling);
@@ -143,29 +152,33 @@ void mpr121::setFDL(byte rising, byte falling, byte touched) {
 }
 
 
-// set the "Max Half Delta" values for proximity detection (AN3891/AN3893)
-// max: 63
+// Sets the "Max Half Delta" baseline filter values for proximity detection.
+// Max: 63
+// (AN3891/AN3893)
 void mpr121::setMHDProx(byte rising, byte falling) {
   writeRegister(MPRREG_ELEPROX_MHD_RISING, rising);
   writeRegister(MPRREG_ELEPROX_MHD_FALLING, falling);
 }
 
-// set the "Noise Half Delta" values for proximity detection (AN3891/AN3893)
-// max: 63
+// Sets the "Noise Half Delta" baseline filter values for proximity detection.
+// Max: 63
+// (AN3891/AN3893)
 void mpr121::setNHDProx(byte rising, byte falling, byte touched) {
   writeRegister(MPRREG_ELEPROX_NHD_AMOUNT_RISING, rising);
   writeRegister(MPRREG_ELEPROX_NHD_AMOUNT_FALLING, falling);
   writeRegister(MPRREG_ELEPROX_NHD_AMOUNT_TOUCHED, touched);
 }
 
-// set the "Noise Count Limit" values for proximity detection (AN3891/AN3893)
+// Sets the "Noise Count Limit" baseline filter values for proximity detection.
+// (AN3891/AN3893)
 void mpr121::setNCLProx(byte rising, byte falling, byte touched) {
   writeRegister(MPRREG_ELEPROX_NCL_RISING, rising);
   writeRegister(MPRREG_ELEPROX_NCL_FALLING, falling);
   writeRegister(MPRREG_ELEPROX_NCL_TOUCHED, touched);
 }
 
-// set the "Filter Delay Limit" values  for proximity detection(AN3891/AN3893)
+// Sets the "Filter Delay Limit" baseline filter values for proximity detection.
+// (AN3891/AN3893)
 void mpr121::setFDLProx(byte rising, byte falling, byte touched) {
   writeRegister(MPRREG_ELEPROX_FDL_RISING, rising);
   writeRegister(MPRREG_ELEPROX_FDL_FALLING, falling);
@@ -173,9 +186,9 @@ void mpr121::setFDLProx(byte rising, byte falling, byte touched) {
 }
 
 
-// set "Debounce" counts
-// a detection must be held this many times before the status register is updated
-// max: 7
+// Sets the debounce counts.
+// A detection must be held for this many readings before the status register is updated.
+// Max: 7
 void mpr121::setDebounce(byte touchNumber, byte releaseNumber) {
   touchNumber &= 0b0111;
   releaseNumber &= 0b0111;
@@ -184,14 +197,16 @@ void mpr121::setDebounce(byte touchNumber, byte releaseNumber) {
 }
 
 
-// set "Filter Configuration" (AN3890)
+// Sets "Filter Configuration".
+// (AN3890)
+// 
 // FFI: "First Filter Iterations"
-// CDC: global "Charge Discharge Current" (μA), not used if autoconfig is enabled -- max 63, default 16
-// CDT: global "Charge Discharge Time" (μs), not used if autoconfig is enabled
+// CDC: Global "Charge Discharge Current" (μA), not used if autoconfig is enabled (Max 63, Default 16)
+// CDT: Global "Charge Discharge Time" (μs), not used if autoconfig is enabled
 // SFI: "Second Filter Iterations"
 // ESI: "Electrode Sample Interval" (ms)
-// response time is equal to SFI * ESI in ms
-//   --set to 4 samples and 1 or 2 ms sample interval for fast response
+// 
+// Response time is equal to SFI * ESI in ms.
 void mpr121::setFilterConfig(mpr121FilterFFI FFI, byte CDC, mpr121FilterCDT CDT, mpr121FilterSFI SFI, mpr121FilterESI ESI) {
   byte FFI_2 = (byte)FFI & 0b00000011;
   byte CDC_6 = CDC & 0b00111111;
@@ -209,11 +224,11 @@ void mpr121::setFilterConfig(mpr121FilterFFI FFI, byte CDC, mpr121FilterCDT CDT,
 }
 
 
-// set "Electrode Configuration"
-// CL: calibration lock (baseline tracking and initial value settings)
-// ELEPROX_EN: sets electrodes to be used for proximity detection
-// ELE_EN: sets the number of electrodes to be detected, starting from ELE0 (0 to disable)
-//   --setting this will enter run mode
+// Sets "Electrode Configuration".
+// 
+// CL: Calibration lock (baseline tracking and initial value settings)
+// ELEPROX_EN: Run with these electrodes used for proximity detection
+// ELE_EN: Run with this number of electrodes to scan, starting from ELE0 (excludes ELEPROX)
 void mpr121::setElectrodeConfiguration(mpr121ElectrodeConfigCL CL, mpr121ElectrodeConfigProx ELEPROX_EN, byte ELE_EN) {
   byte CL_2 = CL & 0b00000011;
   byte ELEPROX_EN_2 = ELEPROX_EN & 0b00000011;
@@ -223,17 +238,17 @@ void mpr121::setElectrodeConfiguration(mpr121ElectrodeConfigCL CL, mpr121Electro
 }
 
 
-// set "Auto-Configure" settings (AN3889)
-// USL: "Up-Side Limit" -- calculate this as `256 * (supplyMillivolts - 700) / supplyMillivolts`
-//   --if unsure, use the value for 1.8V supply (156)
-// LSL: "Low-Side Limit" -- calculate this as `USL * 0.65`
-//   --if unsure, use the value for 1.8V supply (101)
-// TL: "Target Level" -- calculate this as `USL * 0.9`
-//   --if unsure, use the value for 1.8V supply (140)
-// RETRY: set the number of retries for failed config before setting out of range
-// BVA: "Baseline Value Adjust" changes how the baseline registers will be set after auto-configuration completes
-// ARE: "Automatic Reconfiguration Enable" will reconfigure out of range (failed) channels every sampling interval
-// ACE: "Automatic Configuration Enable" will enable/disable auto-configuration when entering run mode
+
+// Sets "Auto-Configure" settings.
+// (AN3889)
+// 
+// USL: "Up-Side Limit" -- Calculate this as `256L * (supplyMillivolts - 700) / supplyMillivolts`. If unsure, use the value for 1.8V supply (156).
+// LSL: "Low-Side Limit" -- Calculate this as `USL * 0.65`. If unsure, use the value for 1.8V supply (101).
+// TL: "Target Level" -- Calculate this as `USL * 0.9`. If unsure, use the value for 1.8V supply (140).
+// RETRY: Number of retries for failed config before setting the out of range flag.
+// BVA: "Baseline Value Adjust" -- Changes how the baseline registers will be set after auto-configuration completes
+// ARE: "Automatic Reconfiguration Enable" -- Out of range (failed) channels will be reconfigured every sampling interval
+// ACE: "Automatic Configuration Enable" -- Perform auto-configuration when entering run mode
 void mpr121::setAutoConfig(byte USL, byte LSL, byte TL, mpr121AutoConfigRetry RETRY, mpr121AutoConfigBVA BVA, bool ARE, bool ACE) {
   byte FFI = (readRegister(MPRREG_AFE_CONFIG) >> 6) & 0b00000011;
   byte RETRY_2 = RETRY & 0b00000011;
@@ -246,9 +261,11 @@ void mpr121::setAutoConfig(byte USL, byte LSL, byte TL, mpr121AutoConfigRetry RE
 }
 
 
-// set the GPIO PWM value for consecutive pins (AN3894)
-// max value is 15
-// pin 9 apparently has a logic bug and pin 10 must also be enabled to work
+// Sets the GPIO PWM value for consecutive pins.
+// (AN3894)
+// 
+// Max value is 15
+// Pin 9 apparently has a logic bug and pin 10 must also have its data set high for it to work.
 //   (https://community.nxp.com/thread/305474)
 void mpr121::setPWM(byte pin, byte count, byte value) {
   if (!checkGPIOPinNum(pin, count))
