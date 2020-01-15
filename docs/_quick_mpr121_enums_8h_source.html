@@ -9,9 +9,18 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+  $(document).ready(function() { init_search(); });
+/* @license-end */
+</script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -24,6 +33,21 @@
    <div id="projectname">QuickMpr121
    </div>
   </td>
+   <td>        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Search" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+</td>
  </tr>
  </tbody>
 </table>
@@ -35,16 +59,23 @@
 var searchBox = new SearchBox("searchBox", "search",false,'Search');
 /* @license-end */
 </script>
-<script type="text/javascript" src="menudata.js"></script>
-<script type="text/javascript" src="menu.js"></script>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(function() {
-  initMenu('',true,false,'search.php','Search');
-  $(document).ready(function() { init_search(); });
-});
-/* @license-end */</script>
-<div id="main-nav"></div>
+$(document).ready(function(){initNavTree('_quick_mpr121_enums_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -59,11 +90,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">QuickMpr121Enums.h</div>  </div>
@@ -301,6 +327,7 @@ $(function() {
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;  MPRREG_PWM_DUTY_3 = 0x84,</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <div class="ttc" id="a_quick_mpr121_enums_8h_html_a3bbfc0ca52598381c8dcc6d45b08b4eaa66fd49aeb2a8552a43665ec0673ab697"><div class="ttname"><a href="_quick_mpr121_enums_8h.html#a3bbfc0ca52598381c8dcc6d45b08b4eaa66fd49aeb2a8552a43665ec0673ab697">MPR_GPIO_MODE_OUTPUT_OPENDRAIN_HIGH</a></div><div class="ttdeci">@ MPR_GPIO_MODE_OUTPUT_OPENDRAIN_HIGH</div><div class="ttdoc">High side only open drain output port for LED driver.</div><div class="ttdef"><b>Definition:</b> QuickMpr121Enums.h:93</div></div>
 <div class="ttc" id="a_quick_mpr121_enums_8h_html_aaa86b74f0f6bbeaf579ef62e5ba75a59aa77e760af96e4e5844232e0428ec70b4"><div class="ttname"><a href="_quick_mpr121_enums_8h.html#aaa86b74f0f6bbeaf579ef62e5ba75a59aa77e760af96e4e5844232e0428ec70b4">MPR_FFI_6</a></div><div class="ttdeci">@ MPR_FFI_6</div><div class="ttdoc">6 samples taken</div><div class="ttdef"><b>Definition:</b> QuickMpr121Enums.h:11</div></div>
 <div class="ttc" id="a_quick_mpr121_enums_8h_html_a7eb55b1477d67983d92f54424d7e1484a2424d5f99aa87e2e7bcc5fa10145be5c"><div class="ttname"><a href="_quick_mpr121_enums_8h.html#a7eb55b1477d67983d92f54424d7e1484a2424d5f99aa87e2e7bcc5fa10145be5c">MPR_AUTOCONFIG_BVA_SET_CLEAR3</a></div><div class="ttdeci">@ MPR_AUTOCONFIG_BVA_SET_CLEAR3</div><div class="ttdoc">Baseline is set to the auto-config baseline with the lower 3 bits cleared.</div><div class="ttdef"><b>Definition:</b> QuickMpr121Enums.h:78</div></div>
@@ -359,10 +386,13 @@ $(function() {
 <div class="ttc" id="a_quick_mpr121_enums_8h_html_a4da370687b4d1e260673bf75f4cd478ca6e0b516aae05d599ff070dd4e52d5ee3"><div class="ttname"><a href="_quick_mpr121_enums_8h.html#a4da370687b4d1e260673bf75f4cd478ca6e0b516aae05d599ff070dd4e52d5ee3">MPR_AUTOCONFIG_RETRY_DISABLED</a></div><div class="ttdeci">@ MPR_AUTOCONFIG_RETRY_DISABLED</div><div class="ttdoc">No retries.</div><div class="ttdef"><b>Definition:</b> QuickMpr121Enums.h:67</div></div>
 <div class="ttc" id="a_quick_mpr121_enums_8h_html_a8e414d6fc4ce0749a157b630f1eb9235af53d689a7e0267dffa68f633c5b0d1f5"><div class="ttname"><a href="_quick_mpr121_enums_8h.html#a8e414d6fc4ce0749a157b630f1eb9235af53d689a7e0267dffa68f633c5b0d1f5">MPR_ESI_32</a></div><div class="ttdeci">@ MPR_ESI_32</div><div class="ttdoc">32 ms</div><div class="ttdef"><b>Definition:</b> QuickMpr121Enums.h:44</div></div>
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by &#160;<a href="http://www.doxygen.org/index.html">
-<img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.17
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="_quick_mpr121_enums_8h.html">QuickMpr121Enums.h</a></li>
+    <li class="footer">Generated by
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17 </li>
+  </ul>
+</div>
 </body>
 </html>
