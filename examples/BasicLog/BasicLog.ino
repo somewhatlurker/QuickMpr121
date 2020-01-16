@@ -41,7 +41,7 @@ void setup() {
     // note: these are only used for digital touch state reads
     mpr.setAllThresholds(15, 10, false);
 
-    // start sensing
+    // start sensing (for 12 electrodes)
     mpr.start(12);
   }
 

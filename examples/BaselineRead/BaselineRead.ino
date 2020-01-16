@@ -36,7 +36,7 @@ void setup() {
     else
       mpr.proxEnable = MPR_ELEPROX_DISABLED;
 
-    // start sensing
+    // start sensing (for 12 electrodes)
     mpr.start(12);
   }
 
