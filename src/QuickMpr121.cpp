@@ -408,13 +408,28 @@ mpr121::mpr121(byte addr, TwoWire *wire)
 
 // Reads one touch state bool.
 // Also use this for reading GPIO inputs.
+// 
+// When multiple touches must be read, using the variant that returns data for all 13 is preferred.
+// This should implement some form of caching -- use electrodeTouchCache/electrodeTouchBuf (depending on MPR121_USE_BITFIELDS) and electrodeTouchCacheMicros
 bool mpr121::readTouchState(byte electrode) {
   if (!checkElectrodeNum(electrode))
     return false;
-
-  byte rawdata = readRegister((mpr121Register)(MPRREG_ELE0_TO_ELE7_TOUCH_STATUS + electrode/8));
   
-  return bitRead(rawdata, electrode % 8);
+  unsigned long microsNow = micros();
+  if (microsNow > electrodeTouchCacheMicros + 500 || microsNow < electrodeTouchCacheMicros) { // cache for 500 microseconds
+    electrodeTouchCacheMicros = microsNow;
+    #if MPR121_USE_BITFIELDS
+      electrodeTouchCache = readTouchState();
+    #else
+      memcpy(electrodeTouchBuf, readTouchState(), sizeof(electrodeTouchBuf));
+    #endif
+  }
+  
+  #if MPR121_USE_BITFIELDS
+    return bitRead(electrodeTouchCache, electrode);
+  #else
+    return electrodeTouchBuf[electrode];
+  #endif
 }
 
 
@@ -423,7 +438,7 @@ bool mpr121::readTouchState(byte electrode) {
   // Also use this for reading GPIO inputs.
   short mpr121::readTouchState() {
     byte* rawdata = readRegister(MPRREG_ELE0_TO_ELE7_TOUCH_STATUS, 2);
-    return rawdata[0] | (rawdata[1] << 8);
+    return rawdata[0] | ((rawdata[1] & 0b00011111) << 8);
   }
 
   // Reads the 15 out of range bits.

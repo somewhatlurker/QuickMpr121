@@ -112,6 +112,12 @@ private:
     #endif
   #endif // MPR121_SAVE_MEMORY
   
+  #if MPR121_USE_BITFIELDS
+    short electrodeTouchCache; ///< Cache for digital single electrode reads
+  #endif
+  unsigned long electrodeTouchCacheMicros; ///< Last update time for electrodeTouchCache (or electrodeTouchBuf if no bitfields)
+  
+  
   /**
    * Writes a value to an MPR121 register.
    */
@@ -361,6 +367,9 @@ public:
   /** 
    * Reads one touch state bool.
    * Also use this for reading GPIO inputs.
+   * 
+   * When multiple touches must be read, using the variant that returns data for all 13 is preferred.
+   * This does implement a simple cache though, so performance shouldn't be drastically different.
    */
   bool readTouchState(byte electrode);
 
