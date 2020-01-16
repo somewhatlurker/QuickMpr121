@@ -421,7 +421,9 @@ bool mpr121::readTouchState(byte electrode) {
     #if MPR121_USE_BITFIELDS
       electrodeTouchCache = readTouchState();
     #else
-      memcpy(electrodeTouchBuf, readTouchState(), sizeof(electrodeTouchBuf));
+      // this line actually isn't needed, because the data would already be in electrodeTouchBuf after calling readTouchState()
+      // memcpy(electrodeTouchBuf, readTouchState(), sizeof(electrodeTouchBuf));
+      readTouchState();
     #endif
   }
   
