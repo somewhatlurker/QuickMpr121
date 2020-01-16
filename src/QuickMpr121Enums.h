@@ -71,6 +71,7 @@ enum mpr121AutoConfigRetry : uint8_t {
 };
 
 /// possible auto-configuration "baseline value adjust" settings
+/// 
 /// datasheet says this is the same as CL, but AN3899 is better here
 enum mpr121AutoConfigBVA : uint8_t {
   MPR_AUTOCONFIG_BVA_DISABLED = 0, ///< Baseline is not changed
