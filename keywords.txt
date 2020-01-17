@@ -85,8 +85,8 @@ autoConfigEnableCalibration	KEYWORD2
 
 autoConfigSkipChargeTime	KEYWORD2
 autoConfigInterruptOOR	KEYWORD2
-autoConfigInterruptReconfigFail	KEYWORD2
-autoConfigInterruptCalibrationFail	KEYWORD2
+autoConfigInterruptARF	KEYWORD2
+autoConfigInterruptACF	KEYWORD2
 
 
 # Constants (LITERAL1)

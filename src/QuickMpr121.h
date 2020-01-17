@@ -370,8 +370,8 @@ public:
                                  ///< This results in a shorter time to configure, but the designer must supply appropriate values.  
                                  ///< Note: individual electrode charge times aren't implemented in this library.
   bool autoConfigInterruptOOR; ///< "Out-of-range interrupt enable" will trigger an interrupt when a channel is determined to be out of range
-  bool autoConfigInterruptReconfigFail; ///< "Auto-reconfiguration fail interrupt enable" will trigger an interrupt when auto-reconfiguration fails
-  bool autoConfigInterruptCalibrationFail; ///< "Auto-configuration fail interrupt enable" will trigger an interrupt when auto-configuration fails
+  bool autoConfigInterruptARF; ///< "Auto-reconfiguration fail interrupt enable" will trigger an interrupt when auto-reconfiguration fails
+  bool autoConfigInterruptACF; ///< "Auto-configuration fail interrupt enable" will trigger an interrupt when auto-configuration fails
 
 
   /** 

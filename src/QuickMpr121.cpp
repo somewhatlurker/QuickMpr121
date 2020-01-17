@@ -411,8 +411,8 @@ mpr121::mpr121(byte addr, TwoWire *wire)
   
   autoConfigSkipChargeTime = false;
   autoConfigInterruptOOR = false;
-  autoConfigInterruptReconfigFail = false;
-  autoConfigInterruptCalibrationFail = false;
+  autoConfigInterruptARF = false;
+  autoConfigInterruptACF = false;
 }
 
 
@@ -747,7 +747,7 @@ void mpr121::start(byte electrodes) {
   setFilterConfig(FFI, globalCDC, globalCDT, SFI, ESI);
 
   setAutoConfig(autoConfigUSL, autoConfigLSL, autoConfigTL, autoConfigRetry, autoConfigBaselineAdjust, autoConfigEnableReconfig, autoConfigEnableCalibration,
-                autoConfigSkipChargeTime, autoConfigInterruptOOR, autoConfigInterruptReconfigFail, autoConfigInterruptCalibrationFail);
+                autoConfigSkipChargeTime, autoConfigInterruptOOR, autoConfigInterruptARF, autoConfigInterruptACF);
 
   // OVCF blocks starting, so reset it 
   if (readOverCurrent())
