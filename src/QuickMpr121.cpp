@@ -15,6 +15,8 @@ byte mpr121::i2cReadBuf[MPR121_I2C_BUFLEN];
 #if MPR121_SAVE_MEMORY
   short mpr121::electrodeDataBuf[13];
   byte mpr121::electrodeBaselineBuf[13];
+  byte mpr121::electrodeCDCBuf[13];
+  mpr121FilterCDT mpr121::electrodeCDTBuf[13];
   #if !MPR121_USE_BITFIELDS
     bool mpr121::electrodeOORBuf[15];
   #endif
@@ -39,7 +41,7 @@ byte* mpr121::readRegister(mpr121Register addr, byte count) {
   i2cWire->write(addr);
   i2cWire->endTransmission(false); // use false to restart instead of stopping
   
-  i2cWire->requestFrom(i2cAddr, count, (byte)true); // sendStop is true by defaualt where supported, but setting it guarantees support
+  i2cWire->requestFrom(i2cAddr, count, (byte)true); // sendStop is true by default where supported, but setting it guarantees support
 
   byte readnum = 0;
   while (i2cWire->available() && readnum < count)
@@ -577,6 +579,79 @@ void mpr121::setAllThresholds(byte touched, byte released, bool prox) {
   for (byte i = 0; i <= maxElectrode; i++) {
     touchThresholds[i] = touched;
     releaseThresholds[i] = released;
+  }
+}
+
+
+// Reads per-electrode "Charge Discharge Current" (μA) for consecutive electrodes.
+// Max: 63
+byte* mpr121::readElectrodeCDC(byte electrode, byte count) {
+  if (!checkElectrodeNum(electrode, count))
+    return electrodeCDCBuf;
+
+  byte* rawdata = readRegister((mpr121Register)(MPRREG_ELE0_CDC + electrode), count);
+
+  for (byte i = 0; i < count; i++) {
+    electrodeCDCBuf[electrode + i] = rawdata[i];
+  }
+
+  return &electrodeCDCBuf[electrode];
+}
+
+// Writes per-electrode "Charge Discharge Current" (μA) for consecutive electrodes.
+// Max: 63
+void mpr121::writeElectrodeCDC(byte electrode, byte count, byte value) {
+  if (!checkElectrodeNum(electrode, count))
+    return;
+  
+  for (byte i = 0; i < count; i++) {
+    writeRegister((mpr121Register)(MPRREG_ELE0_CDC + (electrode + i)), value);
+  }
+}
+
+// Reads per-electrode "Charge Discharge Time" (μs) for consecutive electrodes.
+mpr121FilterCDT* mpr121::readElectrodeCDT(byte electrode, byte count) {
+  if (!checkElectrodeNum(electrode, count))
+    return electrodeCDTBuf;
+
+  byte* rawdata = readRegister((mpr121Register)(MPRREG_ELE0_ELE1_CDT + electrode/2), (electrode % 2 == 0 ? (count+1) / 2 : (count+2) / 2));
+
+  for (byte i = 0; i < count; i++) {
+    mpr121FilterCDT value;
+    if (electrode % 2 == 0)
+      value = (mpr121FilterCDT)(( rawdata[i / 2] >> (i % 2 == 0 ? 0 : 4) ) & 0b111);
+    else
+      value = (mpr121FilterCDT)(( rawdata[(i+1) / 2] >> (i % 2 == 0 ? 4 : 0) ) & 0b111);
+    
+    electrodeCDTBuf[electrode + i] = value;
+  }
+
+  return &electrodeCDTBuf[electrode];
+}
+
+// Writes per-electrode "Charge Discharge Time" (μs) for consecutive electrodes.
+void mpr121::writeElectrodeCDT(byte electrode, byte count, mpr121FilterCDT value) {
+  if (!checkElectrodeNum(electrode, count))
+    return;
+  
+  byte value_3 = value & 0b111;
+  
+  mpr121Register reg = MPRREG_ELE0_ELE1_CDT;
+  byte regVal = 0;
+
+  for (byte i = 0; i < count; i++) {
+    if (i == 0 || (electrode + i) % 2 == 0) { // if just starting or moving to a new register's start
+      reg = (mpr121Register)(MPRREG_ELE0_ELE1_CDT + (electrode + i)/2);
+      regVal = readRegister(reg);
+    }
+    
+    if ((electrode + i) % 2 == 0)
+      regVal = (regVal & 0b11110000) | value_3;
+    else
+      regVal = (regVal & 0b00001111) | (value_3 << 4);
+
+    if ((electrode + i) % 2 == 1 || i == count - 1) // if the last of a register or the last iteration
+      writeRegister(reg, regVal);
   }
 }
 

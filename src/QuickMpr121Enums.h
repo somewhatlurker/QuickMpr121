@@ -16,7 +16,7 @@ enum mpr121FilterFFI : uint8_t {
 
 /// possible "charge discharge time" settings
 enum mpr121FilterCDT : uint8_t {
-  MPR_CDT_DISABLED, ///< disable charging
+  MPR_CDT_DISABLED = 0, ///< disable charging
   MPR_CDT_0_5 = 1, ///< 0.5 microseconds
   MPR_CDT_1 = 2, ///< 1 microsecond
   MPR_CDT_2 = 3, ///< 2 microseconds

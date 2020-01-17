@@ -99,6 +99,8 @@ private:
   #if MPR121_SAVE_MEMORY
     static short electrodeDataBuf[13]; ///< Return buffer for analog electrode data
     static byte electrodeBaselineBuf[13]; ///< Return buffer for electrode baselines
+    static byte electrodeCDCBuf[13]; ///< Return buffer for electrode CDC
+    static mpr121FilterCDT electrodeCDTBuf[13]; ///< Return buffer for electrode CDT
     #if !MPR121_USE_BITFIELDS
       bool electrodeTouchBuf[13]; ///< Return buffer for digital electrode data
       static bool electrodeOORBuf[15]; ///< Return buffer for out-of-range flags
@@ -106,6 +108,8 @@ private:
   #else // MPR121_SAVE_MEMORY
     short electrodeDataBuf[13]; ///< Return buffer for analog electrode data
     byte electrodeBaselineBuf[13]; ///< Return buffer for electrode baselines
+    byte electrodeCDCBuf[13]; ///< Return buffer for electrode CDC
+    mpr121FilterCDT electrodeCDTBuf[13]; ///< Return buffer for electrode CDT
     #if !MPR121_USE_BITFIELDS
       bool electrodeTouchBuf[13]; ///< Return buffer for digital electrode data
       bool electrodeOORBuf[15]; ///< Return buffer for out-of-range flags
@@ -306,8 +310,8 @@ public:
    */
   mpr121(byte addr = 0, TwoWire *wire = &Wire);
 
-  byte touchThresholds[13]; ///< Touch detection thresholds for ELE0-ELE11, ELEPROX
-  byte releaseThresholds[13]; ///< Release detection thresholds for ELE0-ELE11, ELEPROX
+  byte touchThresholds[13]; ///< Touch detection thresholds for ELE0-ELE11 and ELEPROX
+  byte releaseThresholds[13]; ///< Release detection thresholds for ELE0-ELE11 and ELEPROX
 
   byte MHDrising; ///< "Max Half Delta" rising baseline adjustment value (AN3891) -- max: 63
   byte MHDfalling; ///< "Max Half Delta" falling baseline adjustment value (AN3891) -- max: 63
@@ -350,8 +354,6 @@ public:
   mpr121FilterCDT globalCDT; ///< Global "Charge Discharge Time" (μs), not used if autoconfig is enabled
   mpr121FilterSFI SFI; ///< "Second Filter Iterations" (number of samples taken for the second level of filtering)
   mpr121FilterESI ESI; ///< "Electrode Sample Interval" (ms)
-  
-  // TODO: INDIVIDUAL CHARGE CURRENT/TIME
 
 
   mpr121ElectrodeConfigCL calLock; ///< "Calibration Lock" (baseline tracking and initial value settings)
@@ -367,8 +369,7 @@ public:
   
   bool autoConfigSkipChargeTime; ///< "Skip Charge Time Search" will skip searching for charge time and use the already-set per-electrode or global value
                                  ///< 
-                                 ///< This results in a shorter time to configure, but the designer must supply appropriate values.  
-                                 ///< Note: individual electrode charge times aren't implemented in this library.
+                                 ///< This results in a shorter time to configure, but the designer must supply appropriate values.
   bool autoConfigInterruptOOR; ///< "Out-of-range interrupt enable" will trigger an interrupt when a channel is determined to be out of range
   bool autoConfigInterruptARF; ///< "Auto-reconfiguration fail interrupt enable" will trigger an interrupt when auto-reconfiguration fails
   bool autoConfigInterruptACF; ///< "Auto-configuration fail interrupt enable" will trigger an interrupt when auto-configuration fails
@@ -463,6 +464,57 @@ public:
    * \param prox  Whether to set proximity detection thresholds too.
    */
   void setAllThresholds(byte touched, byte released, bool prox);
+  
+  
+  /**
+   * Reads per-electrode "Charge Discharge Current" (μA) for consecutive electrodes.
+   */
+  byte* readElectrodeCDC(byte electrode, byte count);
+  
+  /**
+   * Reads per-electrode "Charge Discharge Current" (μA) for a single electrode.
+   */
+  byte readElectrodeCDC(byte electrode) {
+    return readElectrodeCDC(electrode, 1)[0];
+  }
+  
+  /**
+   * Writes per-electrode "Charge Discharge Current" (μA) for consecutive electrodes.
+   * Max: 63
+   */
+  void writeElectrodeCDC(byte electrode, byte count, byte value);
+  
+  /**
+   * Writes per-electrode "Charge Discharge Current" (μA) for a single electrode.
+   * Max: 63
+   */
+  void writeElectrodeCDC(byte electrode, byte value) {
+    writeElectrodeCDC(electrode, 1, value);
+  }
+  
+  /**
+   * Reads per-electrode "Charge Discharge Time" (μs) for consecutive electrodes.
+   */
+  mpr121FilterCDT* readElectrodeCDT(byte electrode, byte count);
+  
+  /**
+   * Reads per-electrode "Charge Discharge Time" (μs) for a single electrode.
+   */
+  mpr121FilterCDT readElectrodeCDT(byte electrode) {
+    return readElectrodeCDT(electrode, 1)[0];
+  }
+  
+  /**
+   * Writes per-electrode "Charge Discharge Time" (μs) for consecutive electrodes.
+   */
+  void writeElectrodeCDT(byte electrode, byte count, mpr121FilterCDT value);
+  
+  /**
+   * Writes per-electrode "Charge Discharge Time" (μs) for a single electrode.
+   */
+  void writeElectrodeCDT(byte electrode, mpr121FilterCDT value) {
+    writeElectrodeCDT(electrode, 1, value);
+  }
 
 
   /**

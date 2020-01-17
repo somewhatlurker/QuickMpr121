@@ -17,6 +17,10 @@ readElectrodeData	KEYWORD2
 readElectrodeBaseline	KEYWORD2
 writeElectrodeBaseline	KEYWORD2
 setAllThresholds	KEYWORD2
+readElectrodeCDC	KEYWORD2
+writeElectrodeCDC	KEYWORD2
+readElectrodeCDT	KEYWORD2
+writeElectrodeCDT	KEYWORD2
 setGPIOMode	KEYWORD2
 writeGPIODigital	KEYWORD2
 writeGPIOAnalog	KEYWORD2
