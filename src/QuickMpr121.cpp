@@ -240,7 +240,7 @@ void mpr121::setElectrodeConfiguration(mpr121ElectrodeConfigCL CL, mpr121Electro
 
 
 // Sets "Auto-Configure" settings.
-// (AN3889)
+// (AN3889/datasheet)
 // 
 // USL: "Up-Side Limit" -- Calculate this as `256L * (supplyMillivolts - 700) / supplyMillivolts`. If unsure, use the value for 1.8V supply (156).
 // LSL: "Low-Side Limit" -- Calculate this as `USL * 0.65`. If unsure, use the value for 1.8V supply (101).
@@ -249,7 +249,11 @@ void mpr121::setElectrodeConfiguration(mpr121ElectrodeConfigCL CL, mpr121Electro
 // BVA: "Baseline Value Adjust" -- Changes how the baseline registers will be set after auto-configuration completes
 // ARE: "Automatic Reconfiguration Enable" -- Out of range (failed) channels will be reconfigured every sampling interval
 // ACE: "Automatic Configuration Enable" -- Perform auto-configuration when entering run mode
-void mpr121::setAutoConfig(byte USL, byte LSL, byte TL, mpr121AutoConfigRetry RETRY, mpr121AutoConfigBVA BVA, bool ARE, bool ACE) {
+// SCTS: "Skip Charge Time Search" -- Skip CDT search and use the already-set CDTx or global CDT. This results in a shorter time to configure, but the designer must supply appropriate values.
+// OORIE: "Out-of-range interrupt enable" -- Trigger an interrupt when a channel is determined to be out of range
+// ARFIE: "Auto-reconfiguration fail interrupt enable" -- Trigger an interrupt when auto-reconfiguration fails
+// ACFIE: "Auto-configuration fail interrupt enable" -- Trigger an interrupt when auto-configuration fails
+void mpr121::setAutoConfig(byte USL, byte LSL, byte TL, mpr121AutoConfigRetry RETRY, mpr121AutoConfigBVA BVA, bool ARE, bool ACE, bool SCTS, bool OORIE, bool ARFIE, bool ACFIE) {
   byte FFI = (readRegister(MPRREG_AFE_CONFIG) >> 6) & 0b00000011;
   byte RETRY_2 = RETRY & 0b00000011;
   byte BVA_2 = BVA & 0b00000011;
@@ -258,6 +262,7 @@ void mpr121::setAutoConfig(byte USL, byte LSL, byte TL, mpr121AutoConfigRetry RE
   writeRegister(MPRREG_AUTOCONFIG_LSL, LSL);
   writeRegister(MPRREG_AUTOCONFIG_TL, TL);
   writeRegister(MPRREG_AUTOCONFIG_CONTROL_0, (FFI << 6) | (RETRY_2 << 4) | (BVA_2 << 2) | ((ARE ? 1 : 0) << 1) | (ACE ? 1 : 0));
+  writeRegister(MPRREG_AUTOCONFIG_CONTROL_1, ((SCTS ? 1 : 0) << 7) | ((OORIE ? 1 : 0) << 2) | ((ARFIE ? 1 : 0) << 1) | (ACFIE ? 1 : 0));
 }
 
 
@@ -403,6 +408,11 @@ mpr121::mpr121(byte addr, TwoWire *wire)
   autoConfigBaselineAdjust = MPR_AUTOCONFIG_BVA_SET_CLEAR3;
   autoConfigEnableReconfig = true;
   autoConfigEnableCalibration = true;
+  
+  autoConfigSkipChargeTime = false;
+  autoConfigInterruptOOR = false;
+  autoConfigInterruptReconfigFail = false;
+  autoConfigInterruptCalibrationFail = false;
 }
 
 
@@ -736,7 +746,8 @@ void mpr121::start(byte electrodes) {
 
   setFilterConfig(FFI, globalCDC, globalCDT, SFI, ESI);
 
-  setAutoConfig(autoConfigUSL, autoConfigLSL, autoConfigTL, autoConfigRetry, autoConfigBaselineAdjust, autoConfigEnableReconfig, autoConfigEnableCalibration);
+  setAutoConfig(autoConfigUSL, autoConfigLSL, autoConfigTL, autoConfigRetry, autoConfigBaselineAdjust, autoConfigEnableReconfig, autoConfigEnableCalibration,
+                autoConfigSkipChargeTime, autoConfigInterruptOOR, autoConfigInterruptReconfigFail, autoConfigInterruptCalibrationFail);
 
   // OVCF blocks starting, so reset it 
   if (readOverCurrent())

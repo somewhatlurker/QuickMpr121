@@ -270,7 +270,7 @@ private:
   
   /**
    * Sets "Auto-Configure" settings.
-   * (AN3889)
+   * (AN3889/datasheet)
    * 
    * \param USL   "Up-Side Limit" -- Calculate this as `256L * (supplyMillivolts - 700) / supplyMillivolts`. If unsure, use the value for 1.8V supply (156).
    * \param LSL   "Low-Side Limit" -- Calculate this as `USL * 0.65`. If unsure, use the value for 1.8V supply (101).
@@ -279,8 +279,12 @@ private:
    * \param BVA   "Baseline Value Adjust" -- Changes how the baseline registers will be set after auto-configuration completes
    * \param ARE   "Automatic Reconfiguration Enable" -- Out of range (failed) channels will be reconfigured every sampling interval
    * \param ACE   "Automatic Configuration Enable" -- Perform auto-configuration when entering run mode
+   * \param SCTS  "Skip Charge Time Search" -- Skip CDT search and use the already-set CDTx or global CDT. This results in a shorter time to configure, but the designer must supply appropriate values.
+   * \param OORIE "Out-of-range interrupt enable" -- Trigger an interrupt when a channel is determined to be out of range
+   * \param ARFIE "Auto-reconfiguration fail interrupt enable" -- Trigger an interrupt when auto-reconfiguration fails
+   * \param ACFIE "Auto-configuration fail interrupt enable" -- Trigger an interrupt when auto-configuration fails
    */
-  void setAutoConfig(byte USL, byte LSL, byte TL, mpr121AutoConfigRetry RETRY, mpr121AutoConfigBVA BVA, bool ARE, bool ACE);
+  void setAutoConfig(byte USL, byte LSL, byte TL, mpr121AutoConfigRetry RETRY, mpr121AutoConfigBVA BVA, bool ARE, bool ACE, bool SCTS, bool OORIE, bool ARFIE, bool ACFIE);
 
 
   /**
@@ -360,8 +364,14 @@ public:
   mpr121AutoConfigBVA autoConfigBaselineAdjust; ///< "Baseline Value Adjust" changes how the baseline registers will be set after auto-configuration completes
   bool autoConfigEnableReconfig; ///< "Automatic Reconfiguration Enable" will try to reconfigure out of range (failed) channels every sampling interval
   bool autoConfigEnableCalibration; ///< "Automatic Configuration Enable" will enable/disable auto-configuration when entering run mode
-
-  // auto-conrig control register 1 stuff isn't implemented
+  
+  bool autoConfigSkipChargeTime; ///< "Skip Charge Time Search" will skip searching for charge time and use the already-set per-electrode or global value
+                                 ///< 
+                                 ///< This results in a shorter time to configure, but the designer must supply appropriate values.  
+                                 ///< Note: individual electrode charge times aren't implemented in this library.
+  bool autoConfigInterruptOOR; ///< "Out-of-range interrupt enable" will trigger an interrupt when a channel is determined to be out of range
+  bool autoConfigInterruptReconfigFail; ///< "Auto-reconfiguration fail interrupt enable" will trigger an interrupt when auto-reconfiguration fails
+  bool autoConfigInterruptCalibrationFail; ///< "Auto-configuration fail interrupt enable" will trigger an interrupt when auto-configuration fails
 
 
   /** 
