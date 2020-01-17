@@ -83,6 +83,11 @@ autoConfigBaselineAdjust	KEYWORD2
 autoConfigEnableReconfig	KEYWORD2
 autoConfigEnableCalibration	KEYWORD2
 
+autoConfigSkipChargeTime	KEYWORD2
+autoConfigInterruptOOR	KEYWORD2
+autoConfigInterruptReconfigFail	KEYWORD2
+autoConfigInterruptCalibrationFail	KEYWORD2
+
 
 # Constants (LITERAL1)
 
