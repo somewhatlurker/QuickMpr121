@@ -328,7 +328,7 @@ mpr121::mpr121(byte addr, TwoWire *wire)
   }
   
   if (addr >= 0x5a && addr <= 0x5d)
-    bitSet(usedAddresses, 0x5a - addr);
+    bitSet(usedAddresses, addr - 0x5a);
   
   i2cAddr = addr;
   i2cWire = wire;
